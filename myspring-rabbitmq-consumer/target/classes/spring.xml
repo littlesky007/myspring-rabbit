@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 查找最新的schemaLocation 访问 http://www.springframework.org/schema/ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd
+           http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit-2.0.xsd
+			">
+
+	<bean id="rabbitConnectionFactory"
+		class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
+		<constructor-arg value="127.0.0.1" />
+		<property name="username" value="guest" />
+		<property name="password" value="guest" />
+		<property name="channelCacheSize" value="8"></property>
+		<property name="port" value="5672"></property>
+	</bean>
+
+	<rabbit:admin connection-factory="rabbitConnectionFactory"></rabbit:admin>
+
+	<!-- <rabbit:queue name="h1_queue" durable="false"></rabbit:queue>
+	<rabbit:queue name="h2_queue" durable="false"></rabbit:queue>
+	<rabbit:queue name="h3_queue" durable="false"></rabbit:queue> -->
+
+	
+
+	<!-- <rabbit:fanout-exchange name="fanout-exchange"
+		xmlns="http://www.springframework.org/schema/rabbit" durable="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="h1_queue"></rabbit:binding>
+			<rabbit:binding queue="h2_queue"></rabbit:binding>
+			<rabbit:binding queue="h3_queue"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:fanout-exchange> -->
+
+
+	<!-- <bean id="h1_Consumer" class="com.btx.service.H1_Service"></bean>
+	<bean id="h2_Consumer" class="com.btx.service.H2_Service"></bean>
+	<bean id="h3_Consumer" class="com.btx.service.H3_Service"></bean> -->
+	
+	
+
+
+	<rabbit:queue name="allmessage" durable="false"></rabbit:queue>
+	<rabbit:queue name="emailalls" durable="false"></rabbit:queue>
+	<rabbit:queue name="emailerrors" durable="false"></rabbit:queue>
+	<rabbit:queue name="allerror" durable="false"></rabbit:queue>
+	
+	
+	<bean id="allErrorss" class="com.btx.topic.All_Error"></bean>
+	<bean id="emailAllss" class="com.btx.topic.Email_All"></bean>
+	<bean id="emailErrorss" class="com.btx.topic.Email_Error"></bean>
+	<bean id="allss" class="com.btx.topic.MyTopic1"></bean>
+	
+	<rabbit:topic-exchange name="topic-exchange"
+		xmlns="http://www.springframework.org/schema/rabbit" durable="false">
+		<rabbit:bindings>
+			<rabbit:binding queue="allmessage" pattern="#"></rabbit:binding>
+			<rabbit:binding queue="emailalls" pattern="email.*"></rabbit:binding>
+			<rabbit:binding queue="emailerrors" pattern="email.error"></rabbit:binding>
+			<rabbit:binding queue="allerror" pattern="*.error"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:topic-exchange>
+
+
+	<rabbit:listener-container
+		connection-factory="rabbitConnectionFactory">
+		<!-- <rabbit:listener ref="h1_Consumer" queues="h1_queue"
+			method="onMessage"></rabbit:listener>
+		<rabbit:listener ref="h2_Consumer" queues="h2_queue"
+			method="onMessage"></rabbit:listener>
+		<rabbit:listener ref="h3_Consumer" queues="h3_queue"
+			method="onMessage"></rabbit:listener> -->
+			
+		<rabbit:listener ref="allErrorss" queues="allerror" method="onMessage"></rabbit:listener>
+		<rabbit:listener ref="emailAllss" queues="emailalls" method="onMessage"></rabbit:listener>
+		<rabbit:listener ref="emailErrorss" queues="emailerrors" method="onMessage"></rabbit:listener>
+		<rabbit:listener ref="allss" queues="allmessage" method="onMessage"></rabbit:listener>
+	</rabbit:listener-container>
+</beans>

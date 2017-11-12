@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="spring" type="com.poratu.idea.plugins.tomcat" factoryName="SMART_TOMCAT_FACTORY" singleton="true">
+    <option name="DOC_BASE" value="D:\mycode\projectmanager\myspring-rabbit\target" />
+    <option name="CONTEXT_PATH" value="/" />
+    <option name="TOMCAT_PORT" value="8088" />
+    <option name="VM_OPTIONS" value="" />
+    <method>
+      <option name="Make" enabled="false" />
+    </method>
+  </configuration>
+</component>
